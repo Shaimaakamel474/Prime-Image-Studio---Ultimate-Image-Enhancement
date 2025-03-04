@@ -49,6 +49,7 @@ def plot_histograms_as_array(hist, mode, title="Histogram"):
     return img
 
 def plot_cdf_as_array(hist, mode, title="Cumulative Distribution Function (CDF)"):
+  
     if mode == "rgb":
         colors = ['blue', 'green', 'red']
         # labels = ['Blue Channel', 'Green Channel', 'Red Channel']
@@ -87,6 +88,18 @@ def plot_cdf_as_array(hist, mode, title="Cumulative Distribution Function (CDF)"
     return img
 
 def process_image(file_path, mode="rgb"):
+    """
+    Process an image and return the image with the histogram and CDF.
+
+    Args:
+        file_path (str): The path to the image.
+        mode (str): The mode to process the image. Default is 'rgb'.
+
+    Returns:
+        numpy.ndarray: The processed image.
+    """
+    
+
     if mode not in ["rgb", "gray"]:
         raise ValueError("Mode must be 'rgb' or 'gray'.")
 
@@ -116,6 +129,16 @@ def process_image(file_path, mode="rgb"):
 
 
 def process_image(image, mode="rgb"):
+    """
+    Args:
+        image (numpy.ndarray): Image to process.
+        mode (str, optional): Mode to process image. Defaults to "rgb".
+
+    Returns:
+        numpy.ndarray: Histogram image.
+        numpy.ndarray: CDF image.
+    """
+    
 
     height, width = image.shape[:2]
 
@@ -135,19 +158,38 @@ def process_image(image, mode="rgb"):
 
 
 def equalize_image(image):
-    # get the histogram of the image
-    hist, bins = np.histogram(image.flatten(), 256, [0, 256])
+    """
+    Equalize the image 
+    Args:
+        image (numpy.ndarray): Image to equalize.
 
-    # get the Cumulative Distribution Function
-    cdf = hist.cumsum()
+    Returns:
+        numpy.ndarray: Equalized image.
+    """
+    
+    # Step 1: Calculate the histogram of the image
+    hist = np.zeros(256, dtype=int)
+    for pixel in image.flatten():
+        hist[pixel] += 1
 
-    # normalization
-    cdf_normalized = cdf * (255 / cdf.max())
 
-    # mapping form original image to the cdf
-    equalized_image = np.interp(
-        image.flatten(), bins[:-1], cdf_normalized).reshape(image.shape)
-    equalized_image = equalized_image.astype(np.uint8)
+
+    # Step 2: Compute the cumulative distribution function (CDF)
+    cdf = np.zeros(256, dtype=int)
+    cdf[0] = hist[0]
+    for i in range(1, 256):
+        cdf[i] = cdf[i - 1] + hist[i]
+
+    # Step 3: Normalize the CDF
+    cdf_min = cdf.min()
+    cdf_max = cdf.max()
+    cdf_normalized = ((cdf - cdf_min) * 255 / (cdf_max - cdf_min)).astype(np.uint8)
+
+    # Step 4: Map the original pixel values to the equalized values using the normalized CDF
+    equalized_image = np.zeros_like(image, dtype=np.uint8)
+    for i in range(image.shape[0]):
+        for j in range(image.shape[1]):
+            equalized_image[i, j] = cdf_normalized[image[i, j]]
 
     return equalized_image
 
@@ -211,3 +253,4 @@ def manual_local_threshold(image):
                     thresh_image[y, x] = 0
 
     return thresh_image
+
