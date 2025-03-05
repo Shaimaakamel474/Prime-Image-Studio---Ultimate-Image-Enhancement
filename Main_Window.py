@@ -150,9 +150,9 @@ class MainWindow(QMainWindow , Ui_MainWindow ):
             
     
     def Apply_Filter(self):
+        self.handel_carnel_size()
         ksize=self.slider_param_3.value()
         curr_filter=self.Combox_Filter.currentText()
-        print(ksize)
         curr_grayImg=self.noisy_img
         if self.noisy_img is not None:
             if curr_filter == "Gaussian":
@@ -290,7 +290,11 @@ class MainWindow(QMainWindow , Ui_MainWindow ):
         slider.setMaximum(max)
         slider.setSingleStep(step)
 
-    
+    def handel_carnel_size(self):
+        value=self.slider_param_3.value()
+        if value%2==0:
+            value=value+1
+        self.slider_param_3.setValue(value)
 
 if __name__=="__main__":
     app = QApplication(sys.argv)

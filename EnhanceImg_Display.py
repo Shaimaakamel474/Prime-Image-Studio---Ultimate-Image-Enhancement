@@ -6,13 +6,49 @@ matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 
 def calculate_histogram(image, mode):
-    if mode == "rgb":
-        hist = [cv2.calcHist([image], [i], None, [256], [0, 256]).flatten() for i in range(3)]
-    elif mode == "gray":
-        hist = [cv2.calcHist([image], [0], None, [256], [0, 256]).flatten()]
-    else:
+    """
+    Calculate the histogram of an image manually without using OpenCV's calcHist.
+
+    Args:
+        image: The input image. It can be either a grayscale or RGB image.
+        mode (str): The mode of the image. It can be 'rgb' or 'gray'.
+
+    Returns:
+        list: A list containing the histogram(s) of the image.
+              - For 'rgb' mode, it returns a list with three histograms (R, G, B).
+              - For 'gray' mode, it returns a list with a single histogram.
+
+    Raises:
+        ValueError: If the mode is neither 'rgb' nor 'gray'.
+    """
+    if mode not in ('rgb', 'gray'):
         raise ValueError("Invalid mode. Use 'rgb' or 'gray'.")
-    return hist
+
+    # Initialize the histogram with 256 bins (0-255)
+    histogram = [0] * 256
+
+    if mode == 'rgb':
+        # Split the image into its R, G, B channels
+        r_channel = image[:, :, 0]
+        g_channel = image[:, :, 1]
+        b_channel = image[:, :, 2]
+
+        # Calculate histogram for each channel
+        histograms = []
+        for channel in [r_channel, g_channel, b_channel]:
+            hist = [0] * 256
+            for row in channel:
+                for pixel in row:
+                    hist[pixel] += 1
+            histograms.append(hist)
+        return histograms
+    else:  # mode == 'gray'
+        # Iterate through each pixel in the grayscale image
+        for row in image:
+            for pixel in row:
+                histogram[pixel] += 1
+        return [histogram]
+
 
 def plot_histograms_as_array(hist, mode, title="Histogram"):
     if mode == "rgb":
@@ -49,26 +85,58 @@ def plot_histograms_as_array(hist, mode, title="Histogram"):
     return img
 
 def plot_cdf_as_array(hist, mode, title="Cumulative Distribution Function (CDF)"):
-  
+    """
+    Calculate and plot the Cumulative Distribution Function (CDF) of an image histogram manually.
+    
+    Args:
+        hist: The histogram of the image. For 'rgb' mode, it's a list of three histograms (R, G, B).
+             For 'gray' mode, it's a single histogram.
+        mode (str): The mode of the image. It can be 'rgb' or 'gray'.
+        title (str): The title for the plot.
+
+    Returns:
+        img: The plot of the CDF as an image array.
+    """
+    if mode not in ('rgb', 'gray'):
+        raise ValueError("Invalid mode. Use 'rgb' or 'gray'.")
+
     if mode == "rgb":
         colors = ['blue', 'green', 'red']
-        # labels = ['Blue Channel', 'Green Channel', 'Red Channel']
+        num_channels = 3
     else:
         colors = ['black']
-        # labels = ['Grayscale Channel']
+        num_channels = 1
 
-    fig, axs = plt.subplots(len(hist), 1, figsize=(5, 10))
+    # Create a figure with subplots for each channel
+    fig, axs = plt.subplots(num_channels, 1, figsize=(5, 10))
+    if num_channels == 1:
+        axs = [axs]  # Handle grayscale case
 
-    if len(hist) == 1:
-        axs = [axs]  # Handle grayscale case.
+    for i in range(num_channels):
+        if num_channels == 1:
+            channel_hist = hist[0]
+        else:
+            channel_hist = hist[i]
 
-    for i, color in enumerate(colors):
-        cdf = np.cumsum(hist[i])
-        cdf = cdf / cdf[-1]
+        # Initialize CDF
+        cdf = [0] * 256
+        running_total = 0
 
-        axs[i].plot(cdf, color=color, linewidth=1.5)
-        # axs[i].set_title(f'{labels[i]} (CDF)', fontsize=10, color=color)
+        # Calculate running sum manually
+        for intensity in range(256):
+            running_total += channel_hist[intensity]
+            cdf[intensity] = running_total
 
+        # Normalize CDF
+        total_pixels = running_total
+        if total_pixels != 0:
+            cdf = [value / total_pixels for value in cdf]
+        else:
+            # Handle case where there are no pixels (shouldn't happen with valid histogram)
+            cdf = [0.0 for _ in range(256)]
+
+        # Plot the CDF
+        axs[i].plot(cdf, color=colors[i], linewidth=1.5)
         axs[i].set_xlim([0, 255])
         axs[i].set_ylim([0, 1])
         axs[i].set_facecolor('#F5F5F5')
@@ -78,11 +146,12 @@ def plot_cdf_as_array(hist, mode, title="Cumulative Distribution Function (CDF)"
     plt.suptitle(title, fontsize=12)
     plt.tight_layout()
 
+    # Convert plot to image array
     fig.canvas.draw()
     img = np.frombuffer(fig.canvas.buffer_rgba(), dtype=np.uint8)
     img = img.reshape(fig.canvas.get_width_height()[::-1] + (4,))  # RGBA
 
-    img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)  # Convert to RGB (optional)
+    img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)  # Convert to RGB
 
     plt.close(fig)
     return img
