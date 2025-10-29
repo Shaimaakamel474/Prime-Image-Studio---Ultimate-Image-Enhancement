@@ -85,44 +85,9 @@ Apply classic edge detection operators with instant x-gradient and y-gradient vi
 
 <br clear="right"/>
 
----
 
-## 🛠️ Tech Stack
-
-| Component | Technology |
-|-----------|-----------|
-| **Language** | Python 3.8+ |
-| **GUI Framework** | PyQt5, Qt Designer |
-| **Numerical Computing** | NumPy |
-| **Image Processing** | OpenCV (cv2) |
-| **Visualization** | Matplotlib |
 
 ---
-
-## 🏛️ Architecture
-
-<div align="center">
-  <img src="./screenshots/architecture-diagram.png" alt="Architecture Diagram" width="700"/>
-</div>
-
-The project follows a clean, modular, event-driven architecture similar to MVC:
-
-### 📦 Model (Processing Logic)
-Core image processing algorithms, completely decoupled from UI:
-- `EdgeDetection.py` - Sobel, Prewitt, Robert filters
-- `Noise_and_filter.py` - Noise generation and spatial filters
-- `frequncy_domain.py` - FFT-based filters (LPF, HPF, Hybrid)
-- `EnhanceImg_Display.py` - Histogram, CDF, Enhancement operations
-
-### 🖼️ View (User Interface)
-- `Main_Window_UI_2color.ui` - Qt Designer UI definition
-- `Imag_Widget.py` - Custom reusable widget for image display with double-click-to-load functionality
-
-### 🎮 Controller
-- `Main_Window.py` - Central controller connecting UI events to processing functions
-
----
-
 ## 📂 Project Structure
 
 ```
@@ -135,17 +100,8 @@ Prime-Image-Studio/
 ├── 📜 EnhanceImg_Display.py       # Histogram, CDF, Enhancement (Model)
 ├── 📜 EdgeDetection.py            # Edge detection filters (Model)
 ├── 📜 Noise_and_filter.py         # Noise & Spatial filters (Model)
-├── 📜 frequncy_domain.py          # Frequency domain filters (Model)
-│
-├── 📜 requirements.txt            # Project dependencies
-├── 📜 README.md                   # This file
-│
-└── 📁 screenshots/                # Application screenshots
-    ├── main-interface.png
-    ├── histogram-feature.png
-    ├── edge-detection.png
-    ├── noise-filtering.png
-    └── frequency-domain.png
+└── 📜 frequncy_domain.py          # Frequency domain filters (Model)
+
 ```
 
 ---
@@ -199,52 +155,8 @@ Prime-Image-Studio/
 3. **Adjust Parameters**: Use sliders and options to fine-tune the effect
 4. **Real-time Results**: See processed images update instantly!
 
----
 
-## 🧪 Testing & Validation
 
-All manual implementations were validated by comparing outputs with equivalent OpenCV functions using `np.allclose()` assertions. The code includes commented-out validation checks for Sobel, Prewitt, and Robert filters that confirmed near-identical results to their OpenCV counterparts.
-
-<div align="center">
-  <img src="./screenshots/validation-results.png" alt="Validation Results" width="600"/>
-</div>
-
----
-
-## 📊 Performance Comparison
-
-| Filter Type | Manual Implementation | OpenCV Implementation |
-|-------------|----------------------|----------------------|
-| Sobel Edge Detection | ~850ms | ~45ms |
-| Gaussian Filter (5x5) | ~920ms | ~38ms |
-| Median Filter (5x5) | ~1250ms | ~65ms |
-
-*Tested on 1920x1080 image on Intel i7 processor*
-
----
-
-## 🎯 Roadmap & Future Improvements
-
-### Performance Enhancements
-- [ ] Vectorize convolution loops using NumPy array slicing
-- [ ] Implement multi-threading for real-time processing
-- [ ] Add GPU acceleration support (CUDA/OpenCL)
-
-### New Features
-- [ ] Morphological operations (Erosion, Dilation, Opening, Closing)
-- [ ] Advanced filters (Bilateral, Laplacian of Gaussian)
-- [ ] Image segmentation tools
-- [ ] Batch processing support
-- [ ] Export processed images with one click
-
-### UI/UX Improvements
-- [ ] Drag-and-drop image loading
-- [ ] Side-by-side comparison view
-- [ ] Undo/Redo functionality
-- [ ] Dark mode theme
-- [ ] Processing history panel
-
----
 
 ## 📸 Gallery
 
@@ -263,42 +175,10 @@ All manual implementations were validated by comparing outputs with equivalent O
   </table>
 </div>
 
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Here's how you can help:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and development process.
-
----
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👨‍💻 Author
-
-**Your Name**
-
-<div align="center">
-  
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/your-username)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/your-username)
-[![Portfolio](https://img.shields.io/badge/Portfolio-FF5722?style=for-the-badge&logo=google-chrome&logoColor=white)](https://your-website.com)
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:your-email@example.com)
-
-</div>
-
----
 
 ## 🙏 Acknowledgments
 
@@ -307,11 +187,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Built as an educational tool for understanding computer vision fundamentals
 
 ---
-
-<div align="center">
-  <img src="./screenshots/footer-banner.png" alt="Footer Banner" width="800"/>
-  
-  **⭐ If you found this project helpful, please consider giving it a star! ⭐**
-  
-  Made with ❤️ and Python
-</div>
